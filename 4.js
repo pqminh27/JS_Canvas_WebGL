@@ -200,7 +200,7 @@ function main() {
     initVertexBuffers(gl);
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.POINTS, 0, n);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
 }
 function initVertexBuffers(gl) {
     const n = 3;
