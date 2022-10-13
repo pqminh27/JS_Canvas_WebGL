@@ -1,4 +1,4 @@
-// //6.1: Draw 1 Triangle Red, 1 Triangle Blue with vector translation
+// //6.1
 // ("use strict");
 // //Vertex shader program
 // const VSHADER_SOURCE =
@@ -30,13 +30,9 @@
 
 //     const vertices = new Float32Array([0.0, 0.5, -0.5, -0.5, 0.5, -0.5]);
 //     const Buffer_Data = gl.createBuffer();
-//     if (!Buffer_Data) {
-//         console.log("Failed to create the buffer object");
-//         return -1;
-//     }
-//     const FSIZE = vertices.BYTES_PER_ELEMENT;
 //     gl.bindBuffer(gl.ARRAY_BUFFER, Buffer_Data);
 //     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
 //     const a_Position = gl.getAttribLocation(gl.program, "a_Position");
 //     const u_FragColor = gl.getUniformLocation(gl.program, "u_FragColor");
 //     const u_Vector = gl.getUniformLocation(gl.program, "u_Vector");
@@ -52,76 +48,6 @@
 
 //     gl.uniform4f(u_FragColor, 0.0, 0.0, 1.0, 1.0); //blue
 //     gl.uniform4fv(u_Vector, [0.3, 0.3, 0, 0]);
-//     gl.drawArrays(gl.LINE_LOOP, 0, 3);
-// }
-//------------------------------------------------------------------------------------
-// //6.2: Rotate triangle blue
-// ("use strict");
-
-// const {mat2, mat3, mat4, vec2, vec3, vec4} = glMatrix;
-// //Vertex shader program
-// const VSHADER_SOURCE =
-//     "precision mediump float;\n" +
-//     "attribute vec4 a_Position;\n" +
-//     // "uniform vec4 v_offset;\n" +
-//     // "attribute float a_PointSize;\n" +
-//     "uniform float u_CosBeta, u_SinBeta;\n" +
-//     "void main() {\n" +
-//     // "  gl_Position = a_Position + v_offset;\n" +
-//     "  gl_Position.x = a_Position.x * u_CosBeta - a_Position.y * u_SinBeta;\n" +
-//     "  gl_Position.y = a_Position.x * u_SinBeta + a_Position.y * u_CosBeta;\n " +
-//     "  gl_Position.z = a_Position.z;\n" +
-//     "  gl_Position.w = 1.0;\n" +
-//     // "  gl_PointSize = a_PointSize;\n" +
-//     "}\n";
-// // Fragment shader program
-// const FSHADER_SOURCE =
-//     "precision mediump float;\n" +
-//     "uniform vec4 u_FragColor;\n" +
-//     "void main() {\n" +
-//     "  gl_FragColor = u_FragColor;\n" +
-//     "}\n";
-
-// function main() {
-//     const canvas = document.getElementById("mycanvas");
-//     const gl = getWebGLContext(canvas);
-//     if (!gl) {
-//         console.log("Failed to get the rendering context for WebGL");
-//         return;
-//     }
-//     if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
-//         console.log("Failed to intialize shaders.");
-//         return;
-//     }
-
-//     const vertices = new Float32Array([0.0, 0.5, -0.5, -0.5, 0.5, -0.5]);
-//     const dataBuffer = gl.createBuffer();
-//     gl.bindBuffer(gl.ARRAY_BUFFER, dataBuffer);
-//     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-//     const a_Position = gl.getAttribLocation(gl.program, "a_Position");
-//     const u_FragColor = gl.getUniformLocation(gl.program, "u_FragColor");
-
-//     gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
-//     gl.enableVertexAttribArray(a_Position);
-
-//     const u_CosBeta = gl.getUniformLocation(gl.program, "u_CosBeta");
-//     const u_SinBeta = gl.getUniformLocation(gl.program, "u_SinBeta");
-
-//     //Draw the red triangle first
-//     const ANGLE_BETA_RED = 0;
-//     const radian_triangle_red = (Math.PI * ANGLE_BETA_RED) / 180.0;
-//     gl.uniform1f(u_CosBeta, Math.cos(radian_triangle_red));
-//     gl.uniform1f(u_SinBeta, Math.sin(radian_triangle_red));
-//     gl.uniform4f(u_FragColor, 1.0, 0.0, 0.0, 1.0); //red
-//     gl.drawArrays(gl.LINE_LOOP, 0, 3);
-
-//     //Draw the blue triangle
-//     const ANGLE_BETA_BLUE = 90;
-//     const radian_triangle_blue = (Math.PI * ANGLE_BETA_BLUE) / 180.0;
-//     gl.uniform1f(u_CosBeta, Math.cos(radian_triangle_blue));
-//     gl.uniform1f(u_SinBeta, Math.sin(radian_triangle_blue));
-//     gl.uniform4f(u_FragColor, 0.0, 0.0, 1.0, 1.0); //blue
 //     gl.drawArrays(gl.LINE_LOOP, 0, 3);
 // }
 //-----------------------------------------------------------------------------------
