@@ -48,7 +48,7 @@ function main() {
         g_colors.red[0],
         g_colors.red[1],
         g_colors.red[2],
-        g_colors.red[3],/
+        g_colors.red[3],
         g_colors.green[0],
         g_colors.green[1],
         g_colors.green[2],
