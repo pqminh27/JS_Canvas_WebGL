@@ -1,6 +1,6 @@
-# JS_Canvas_WebGL
+## JS_Canvas_WebGL
 
-Labs of Canvas, WebGL on JS <br/>
+#### Labs of Canvas, WebGL on JS <br/>
 Lab 1: Draw pn canvas by context <br/>
 Lab 2: Draw points with different sizes on canvas (Not by buffer) <br/>
 Lab 3: Draw points in square with corresponding colors <br/>
