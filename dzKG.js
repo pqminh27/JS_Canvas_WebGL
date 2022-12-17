@@ -82,7 +82,7 @@ function main() {
     mat4.lookAt(viewMatrix, eye, centerPoint, [0.0, 1.0, 0.0]);
     mat4.multiply(uMatrix, projMatrix, viewMatrix);
 
-    const ANGLE_SPEED_IN_GRAD = 30.0; // grad/second
+    const ANGLE_SPEED_IN_GRAD = 90.0; // grad/second
     let g_last = Date.now(),
         now,
         AngleBetween2RendersInGrad,
@@ -97,7 +97,7 @@ function main() {
         requestAnimationFrame(render);
     };
     render();
-    const renderBySecond = setInterval(() => render(), 1000);
+    // const renderBySecond = setInterval(() => render(), 1000);
 }
 
 function draw(gl, n, AngleBetween2RendersInGrad, matrixModel, u_MatrixModel) {
@@ -113,13 +113,10 @@ function draw(gl, n, AngleBetween2RendersInGrad, matrixModel, u_MatrixModel) {
         [0.0, 0.0, 1.0], //axis Oz
         glMatrix.glMatrix.toRadian(AngleBetween2RendersInGrad)
     );
+
     quat.lerp(res_quat, quat_begin, quat_end, 1.0); //full process from begin quat to end quat
 
-    moveMatrix = mat4.fromRotationTranslation(
-        moveMatrix,
-        res_quat,
-        [0.0, 0.0, 0.0]
-    ); //this will make the cone not translate
+    mat4.fromRotationTranslation(moveMatrix, res_quat, [0.0, 0.0, 0.0]); //this will make the cone not translate
 
     mat4.multiply(matrixModel, matrixModel, moveMatrix);
     gl.uniformMatrix4fv(u_MatrixModel, false, matrixModel);
