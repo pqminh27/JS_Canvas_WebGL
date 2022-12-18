@@ -34,11 +34,11 @@ const {mat2, mat3, mat4, vec2, vec3, vec4} = glMatrix;
 //     "const float m = 90.0;\n" +
 //     "void main() {\n" +
 //     "   vec3 normal = normalize(v_Normal);\n" +
-//     "   vec3 surfaceToLightDirection = normalize(v_surfaceToLight);\n" +
-//     "   vec3 surfaceToViewDirection = normalize(v_surfaceToView);\n" +
-//     "   vec3 reflectDirection = reflect(-surfaceToLightDirection, normal);\n" + //Using reflect
-//     // "   vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);\n" +
-//     "   float nDotL = max(dot(normal, surfaceToLightDirection), 0.0);\n" +
+//     "   vec3 lightDirection = normalize(v_surfaceToLight);\n" +
+//     "   vec3 viewDirection = normalize(v_surfaceToView);\n" +
+//     "   vec3 reflectDirection = reflect(-lightDirection, normal);\n" + //Using reflect
+//     // "   vec3 halfVector = normalize(lightDirection + viewDirection);\n" +
+//     "   float nDotL = max(dot(normal, lightDirection), 0.0);\n" +
 //     "	float vDotR = max(dot(v_surfaceToView, reflectDirection), 0.0);\n" +
 //     "   vec3 ambient = u_AmbientLight * v_Color.rgb;\n" +
 //     "   vec3 diffuse = u_LightColor * v_Color.rgb * nDotL;\n" +
@@ -82,14 +82,11 @@ const FSHADER_SOURCE =
     "varying vec3 v_surfaceWorldPosition;\n" +
     "const float m = 90.0;\n" +
     "void main() {\n" +
-    "   vec3 surfaceToLightDirection = normalize(u_LightPosition - v_surfaceWorldPosition);\n" +
-    "   vec3 surfaceToViewDirection = normalize(u_ViewPosition - v_surfaceWorldPosition);\n" +
-    // "   vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);\n" +
-    "	vec3 reflectDirection = reflect(-surfaceToLightDirection, v_Normal);\n" +
-    // "   vec3 mirrorViewDirection = normalize(dot(v_Normal + v_Normal, surfaceToLightDirection) * v_Normal - surfaceToLightDirection);\n" +
-    "   float nDotL = max(dot(surfaceToLightDirection, v_Normal), 0.0);\n" +
-    "	float vDotR = max(dot(surfaceToViewDirection, reflectDirection), 0.0);\n" +
-    // "	float vDotR = max(dot(surfaceToViewDirection, mirrorViewDirection), 0.0);\n" +
+    "   vec3 lightDirection = normalize(u_LightPosition - v_surfaceWorldPosition);\n" +
+    "   vec3 viewDirection = normalize(u_ViewPosition - v_surfaceWorldPosition);\n" +
+    "	vec3 reflectDirection = reflect(-lightDirection, v_Normal);\n" +
+    "   float nDotL = max(dot(lightDirection, v_Normal), 0.0);\n" +
+    "	float vDotR = max(dot(viewDirection, reflectDirection), 0.0);\n" +
     "   vec3 diffuse = u_LightColor * v_Color.rgb * nDotL;\n" +
     "   vec3 ambient = u_AmbientLight * v_Color.rgb;\n" +
     // "   float specular = 0.0;\n" +

@@ -40,13 +40,19 @@ const FSHADER_SOURCE =
     "	vec3 reflectDirection = reflect(-surfaceToLightDirection, normal);\n" +
     "	float nDotL = max(dot(surfaceToLightDirection, normal), 0.0);\n" +
     "	float vDotR = max(dot(surfaceToViewDirection, reflectDirection), 0.0);\n" +
+    "	vec3 lightDirection = normalize(u_LightPosition - vertexPosition);\n" +
+    "	vec3 viewDirection = normalize(u_ViewPosition - vertexPosition);\n" +
+    "   vec3 lightAndViewDirection = normalize(lightDirection + viewDirection);\n" +
+    "	vec3 reflectDirection = reflect(-lightDirection, normal);\n" +
+    "	float nDotL = max(dot(lightDirection, normal), 0.0);\n" +
+    "	float vDotR = max(dot(viewDirection, reflectDirection), 0.0);\n" +
     "	vec3 diffuse = kd * u_LightColor * v_Color.rgb * nDotL;\n" +
     "	vec3 ambient = ka * u_AmbientLight * v_Color.rgb;\n" +
     "   vec3 specular = ks * u_LightColor * v_Color.rgb * pow(vDotR, m);\n" +
     "   return diffuse + ambient + specular;\n" +
     "}\n" +
     "void main() {\n" +
-    // "   gl_FragColor = v_Color;\n" +
+    // "   gl_FragColor = v_Color;\n" +viewDirection
     // "   gl_FragColor.rgb += phongModel(v_surfaceWorldPosition, v_Normal);\n" +
     // "   gl_FragColor.rgb += phongModel(v_surfaceWorldPosition, -v_Normal);\n" +
     /////////////////////////////////////////////////////////////////////////////
@@ -55,8 +61,7 @@ const FSHADER_SOURCE =
     "   vec3 surfaceColor;\n" +
     "	if(gl_FrontFacing)\n" +
     "		surfaceColor = frontColor;\n" +
-    "	else\n" +
-    "		surfaceColor = backColor;\n" +
+    "	else surfaceColor = backColor;\n" +
     "	float v_Dist = distance(vec4(v_surfaceWorldPosition, 0.0), vec4(u_ViewPosition, 0.0));\n" +
     "	float fogFactor = exp(-_rho * v_Dist);\n" +
     "	vec3 _color = mix(u_FogColor, surfaceColor, fogFactor);\n" + //u_FogColor * (1 - fogFactor) + surfaceColor * fogFactor

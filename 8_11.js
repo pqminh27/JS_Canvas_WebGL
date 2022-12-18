@@ -29,13 +29,13 @@ const FSHADER_SOURCE =
     "varying vec4 v_Color;\n" +
     "const float m = 90.0;\n" +
     "vec3 phongModel(const in vec3 vertexPosition, const in vec3 normal) {\n" +
-    "	vec3 surfaceToLightDirection = normalize(u_LightPosition - vertexPosition);\n" +
-    "	vec3 surfaceToViewDirection = normalize(u_ViewPosition - vertexPosition);\n" +
-    // "   vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);\n" +
-    // "	vec3 reflectDirection = reflect(-surfaceToLightDirection, normal);\n" +
-    "   vec3 mirrorViewDirection = normalize(dot(v_Normal + v_Normal, surfaceToLightDirection) * v_Normal - surfaceToLightDirection);\n" +
-    "	float nDotL = max(dot(surfaceToLightDirection, normal), 0.0);\n" +
-    "	float vDotR = max(dot(surfaceToViewDirection, mirrorViewDirection), 0.0);\n" +
+    "	vec3 lightDirection = normalize(u_LightPosition - vertexPosition);\n" +
+    "	vec3 viewDirection = normalize(u_ViewPosition - vertexPosition);\n" +
+    // "   vec3 lightAndViewDirection = normalize(lightDirection + viewDirection);\n" +
+    // "	vec3 reflectDirection = reflect(-lightDirection, normal);\n" +
+    "   vec3 mirrorViewDirection = normalize(dot(v_Normal + v_Normal, lightDirection) * v_Normal - lightDirection);\n" +
+    "	float nDotL = max(dot(lightDirection, normal), 0.0);\n" +
+    "	float vDotR = max(dot(viewDirection, mirrorViewDirection), 0.0);\n" +
     "	vec3 diffuse = u_LightColor * v_Color.rgb * nDotL;\n" +
     "	vec3 ambient = u_AmbientLight * v_Color.rgb;\n" +
     "   vec3 specular = u_LightColor * v_Color.rgb * pow(vDotR, m);\n" +

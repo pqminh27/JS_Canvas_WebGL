@@ -6,7 +6,7 @@ const VSHADER_SOURCE =
     "attribute vec4 a_Color;\n" +
     "attribute vec4 a_Normal;\n" +
     "uniform mat4 u_MvpMatrix;\n" +
-    "uniform vec3 u_DiffuseLight;\n" +
+    "uniform vec3 u_LightColor;\n" +
     "uniform vec3 u_LightDirection;\n" +
     "uniform vec3 u_AmbientLight;\n" +
     "varying vec4 v_Color;\n" +
@@ -14,10 +14,10 @@ const VSHADER_SOURCE =
     "   gl_Position = u_MvpMatrix * a_Position ;\n" +
     "   vec3 normal = normalize(a_Normal.xyz);\n" +
     "   float nDotL = max(dot(u_LightDirection, normal), 0.0);\n" +
-    "   vec3 diffuse = u_DiffuseLight * a_Color.rgb * nDotL;\n" +
+    "   vec3 diffuse = u_LightColor * a_Color.rgb * nDotL;\n" +
     "   vec3 ambient = u_AmbientLight * a_Color.rgb;\n" +
     // "   v_Color = vec4(diffuse, a_Color.a);\n" +
-    "   v_Color = vec4(diffuse + ambient, a_Color.a);\n" +
+    "   v_Color = vec4(diffuse + ambient, a_Color.a);\n" + // 8.4
     "}\n";
 
 const FSHADER_SOURCE =
@@ -64,28 +64,24 @@ function main() {
     gl.enable(gl.DEPTH_TEST);
 
     const u_MvpMatrix = gl.getUniformLocation(gl.program, "u_MvpMatrix");
-    const u_DiffuseLight = gl.getUniformLocation(gl.program, "u_DiffuseLight");
+    const u_LightColor = gl.getUniformLocation(gl.program, "u_LightColor");
     const u_LightDirection = gl.getUniformLocation(
         gl.program,
         "u_LightDirection"
     );
     const u_AmbientLight = gl.getUniformLocation(gl.program, "u_AmbientLight");
-    if (
-        !u_MvpMatrix ||
-        !u_DiffuseLight ||
-        !u_LightDirection ||
-        !u_AmbientLight
-    ) {
+    if (!u_MvpMatrix || !u_LightColor || !u_LightDirection || !u_AmbientLight) {
         console.log("Failed to get the storage location");
         return -1;
     }
 
-    gl.uniform3f(u_DiffuseLight, 1.0, 1.0, 1.0);
-    let lightDirection = vec3.create();
+    gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
+
+    const lightDirection = vec3.create();
     vec3.set(lightDirection, 0.5, 3.0, 4.0);
     vec3.normalize(lightDirection, lightDirection);
     gl.uniform3fv(u_LightDirection, lightDirection);
-    gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
+    gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2); //рассеянный свет
 
     let mvpMatrix = mat4.create(),
         projMatrix = mat4.create(),

@@ -36,12 +36,12 @@ const FSHADER_SOURCE =
     "vec3 ks = vec3(0.7739, 0.7739, 0.7739);\n" + //Коэфф зеркального отражения
     "const float m = 90.0;\n" +
     "vec3 phongModel(const in vec3 vertexPosition, const in vec3 normal) {\n" +
-    "	vec3 surfaceToLightDirection = normalize(u_LightPosition - vertexPosition);\n" +
-    "	vec3 surfaceToViewDirection = normalize(u_ViewPosition - vertexPosition);\n" +
-    "   vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);\n" +
-    "	vec3 reflectDirection = reflect(-surfaceToLightDirection, normal);\n" +
-    "	float nDotL = max(dot(surfaceToLightDirection, normal), 0.0);\n" +
-    "	float vDotR = max(dot(surfaceToViewDirection, reflectDirection), 0.0);\n" +
+    "	vec3 lightDirection = normalize(u_LightPosition - vertexPosition);\n" +
+    "	vec3 viewDirection = normalize(u_ViewPosition - vertexPosition);\n" +
+    // "   vec3 lightAndViewDirection = normalize(lightDirection + viewDirection);\n" +
+    "	vec3 reflectDirection = reflect(-lightDirection, normal);\n" +
+    "	float nDotL = max(dot(lightDirection, normal), 0.0);\n" +
+    "	float vDotR = max(dot(viewDirection, reflectDirection), 0.0);\n" +
     "	vec3 diffuse = u_LightColor * v_Color.rgb * nDotL;\n" +
     "	vec3 ambient = u_AmbientLight * v_Color.rgb;\n" +
     "   vec3 specular = u_LightColor * v_Color.rgb * pow(vDotR, m);\n" +
@@ -62,7 +62,7 @@ const FSHADER_SOURCE =
     "	float fogFactor = exp(-_rho * v_Dist);\n" +
     // "   float fogFactor = exp((_rho * v_Dist) * (_rho * v_Dist));\n" +
     // "   float fogFactor = clamp((u_FogColor.y - v_Dist) / (u_FogColor.y - u_FogColor.x), 0.0, 1.0);\n" +
-    "	vec3 _color = mix(u_FogColor, surfaceColor, fogFactor);\n" + //u_FogColor * (1 - fogFactor) + surfaceColor * fogFactor
+    "	vec3 _color = mix(u_FogColor, surfaceColor, fogFactor);\n" + //mix : u_FogColor * (1 - fogFactor) + surfaceColor * fogFactor
     "	gl_FragColor = vec4(_color, v_Color.a);\n" +
     "}\n";
 
@@ -108,7 +108,7 @@ function main() {
         "u_LightPosition"
     );
     const u_LightColor = gl.getUniformLocation(gl.program, "u_LightColor");
-    gl.uniform3f(u_LightPosition, 2.5, 2.5, 3.0);
+    gl.uniform3f(u_LightPosition, 2.5, 3.0, 4.0);
     gl.uniform3f(
         u_LightColor,
         g_colors.white[0],
@@ -455,19 +455,19 @@ function initVertexBuffers(gl) {
         6,
         7, // right
 
-        8,
-        9,
-        10,
-        8,
-        10,
-        11, // up
+        // 8,
+        // 9,
+        // 10,
+        // 8,
+        // 10,
+        // 11, // up
 
-        12,
-        13,
-        14,
-        12,
-        14,
-        15, // left
+        // 12,
+        // 13,
+        // 14,
+        // 12,
+        // 14,
+        // 15, // left
 
         16,
         17,

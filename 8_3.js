@@ -25,7 +25,7 @@ const VSHADER_SOURCE =
     "   vec3 v_surfaceToView = u_viewWorldPosition - vec3(vertexPosition);\n" +
     "   vec3 surfaceToLightDirection = normalize(v_surfaceToLight);\n" +
     "   vec3 surfaceToViewDirection = normalize(v_surfaceToView);\n" +
-    "   vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);\n" +
+    "   vec3 lightAndViewDirection = normalize(surfaceToLightDirection + surfaceToViewDirection);\n" +
     "   vec3 mirroredViewDirection = normalize(dot(normal + normal, surfaceToLightDirection) * normal - surfaceToLightDirection);\n" +
     "   float lightDirectionDotNormal = max(dot(surfaceToLightDirection, normal), 0.0);\n" +
     "   float viewDotMirroredDirection = max(dot(surfaceToViewDirection, mirroredViewDirection), 0.0);\n" +
@@ -35,7 +35,7 @@ const VSHADER_SOURCE =
     "   v_Color = vec4(diffuse + ambient + specular, a_Color.a);\n" +
     // "   float specular = 0.0;\n" +
     // "   if (light > 0.0) {\n" +
-    // "       specular = pow(max(dot(normal, halfVector), 0.0), u_shininess);\n" +
+    // "       specular = pow(max(dot(normal, lightAndViewDirection), 0.0), u_shininess);\n" +
     // "   }\n" +
     "}\n";
 
@@ -105,7 +105,7 @@ function main() {
         g_colors.white[1],
         g_colors.white[2]
     );
-    gl.uniform3f(u_LightPosition, 6.0, 6.0, 14.0);
+    gl.uniform3f(u_LightPosition, 3.5, 4.0, 5.0);
     gl.uniform3f(u_AmbientLight, 0.0, 0.0, 0.0);
 
     const viewWorldPositionLocation = gl.getUniformLocation(
