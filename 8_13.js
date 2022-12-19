@@ -1,4 +1,4 @@
-//Effect Tuman - Fog
+//Effect Tuman - Fog: Control the density of fog by arrow UP/arrow DOWN
 // Vertex shader program
 const VSHADER_SOURCE =
     "attribute vec4 a_Position;\n" +
