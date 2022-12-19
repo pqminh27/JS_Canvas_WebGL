@@ -26,7 +26,7 @@ const FSHADER_SOURCE =
     "uniform vec3 u_LightColor;\n" +
     "uniform vec3 u_AmbientLight;\n" +
     "uniform vec3 u_FogColor;\n" +
-    "const float _rho = 0.2;\n" +
+    "const float density = 0.2;\n" + //density of fog
     ///////////////////////////////////////////
     "varying vec3 v_surfaceWorldPosition;\n" +
     "varying vec3 v_Normal;\n" +
@@ -59,11 +59,18 @@ const FSHADER_SOURCE =
     "		surfaceColor = frontColor;\n" +
     "	else surfaceColor = backColor;\n" +
     "	float v_Dist = distance(vec4(v_surfaceWorldPosition, 0.0), vec4(u_ViewPosition, 0.0));\n" +
-    "	float fogFactor = exp(-_rho * v_Dist);\n" +
-    // "   float fogFactor = exp((_rho * v_Dist) * (_rho * v_Dist));\n" +
-    // "   float fogFactor = clamp((u_FogColor.y - v_Dist) / (u_FogColor.y - u_FogColor.x), 0.0, 1.0);\n" +
+    "	float fogFactor = exp(-density * v_Dist);\n" + // экспоненциальную линейную функцию
+    // "   float fogFactor = exp(-(density * v_Dist) * (density * v_Dist));\n" + // экспоненциальную квадратичную функцию
+    "   fogFactor = clamp(fogFactor, 0.0, 1.0);\n" +
     "	vec3 _color = mix(u_FogColor, surfaceColor, fogFactor);\n" + //mix : u_FogColor * (1 - fogFactor) + surfaceColor * fogFactor
     "	gl_FragColor = vec4(_color, v_Color.a);\n" +
+    /////////////////////////////////////////////////////////////////
+    //// Distance to fog start and fog end; fog covers object; factor becomes smaller as it goes further away from eye point; When the end of the fog is further away from the camera, the fog becomes thinner
+    // "   float fogStart = 0.01, fogEnd = 12.5;\n" +
+    // "   float fogFactor = clamp((fogEnd - v_Dist) / (fogEnd - fogStart), 0.0, 1.0);\n" + // линейная функция
+    // "	vec3 _color = mix(u_FogColor, surfaceColor, fogFactor);\n" +
+    //// "   gl_FragColor = vec4(fogFactor, fogFactor, fogFactor, 1.0);\n" +
+    // "	gl_FragColor = vec4(_color, v_Color.a);\n" +
     "}\n";
 
 const g_colors = {
@@ -108,7 +115,7 @@ function main() {
         "u_LightPosition"
     );
     const u_LightColor = gl.getUniformLocation(gl.program, "u_LightColor");
-    gl.uniform3f(u_LightPosition, 2.5, 3.0, 4.0);
+    gl.uniform3f(u_LightPosition, 4.0, 3.0, 5.0);
     gl.uniform3f(
         u_LightColor,
         g_colors.white[0],
@@ -145,7 +152,8 @@ function main() {
     gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix);
 
     mat4.perspective(projMatrx, glMatrix.glMatrix.toRadian(30), 1, 0.001, 1000);
-    mat4.lookAt(viewMatrix, [5.0, 7.5, 12.0], [0.0, 0.0, 0.0], [0, 1, 0]);
+    mat4.lookAt(viewMatrix, [5.0, 10.0, 12.5], [0.0, 0.0, 0.0], [0, 1, 0]);
+    // mat4.lookAt(viewMatrix, [25.0, 65.0, 35], [0.0, 2.0, 0.0], [0, 1, 0]);
     mat4.multiply(mvpMatrix, projMatrx, viewMatrix);
     mat4.multiply(mvpMatrix, mvpMatrix, modelMatrix);
     mat4.invert(normalMatrix, modelMatrix);
@@ -155,6 +163,7 @@ function main() {
     gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix);
     gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix);
 
+    gl.clearColor(0.137, 0.231, 0.423, 1.0); // clear fog color
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
@@ -358,6 +367,79 @@ function initVertexBuffers(gl) {
         g_colors.red[0],
         g_colors.red[1],
         g_colors.red[2], // v4-v7-v6-v5 back
+        ////////////////////////////////////////////////////////////////
+        // 0.4,
+        // 0.4,
+        // 1.0,
+        // 0.4,
+        // 0.4,
+        // 1.0,
+        // 0.4,
+        // 0.4,
+        // 1.0,
+        // 0.4,
+        // 0.4,
+        // 1.0, // v0-v1-v2-v3 front
+        // 0.4,
+        // 1.0,
+        // 0.4,
+        // 0.4,
+        // 1.0,
+        // 0.4,
+        // 0.4,
+        // 1.0,
+        // 0.4,
+        // 0.4,
+        // 1.0,
+        // 0.4, // v0-v3-v4-v5 right
+        // 1.0,
+        // 0.4,
+        // 0.4,
+        // 1.0,
+        // 0.4,
+        // 0.4,
+        // 1.0,
+        // 0.4,
+        // 0.4,
+        // 1.0,
+        // 0.4,
+        // 0.4, // v0-v5-v6-v1 up
+        // 1.0,
+        // 1.0,
+        // 0.4,
+        // 1.0,
+        // 1.0,
+        // 0.4,
+        // 1.0,
+        // 1.0,
+        // 0.4,
+        // 1.0,
+        // 1.0,
+        // 0.4, // v1-v6-v7-v2 left
+        // 1.0,
+        // 1.0,
+        // 1.0,
+        // 1.0,
+        // 1.0,
+        // 1.0,
+        // 1.0,
+        // 1.0,
+        // 1.0,
+        // 1.0,
+        // 1.0,
+        // 1.0, // v7-v4-v3-v2 down
+        // 0.4,
+        // 1.0,
+        // 1.0,
+        // 0.4,
+        // 1.0,
+        // 1.0,
+        // 0.4,
+        // 1.0,
+        // 1.0,
+        // 0.4,
+        // 1.0,
+        // 1.0, // v4-v7-v6-v5 back
     ]);
 
     const normals = new Float32Array([
