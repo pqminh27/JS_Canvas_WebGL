@@ -16,9 +16,9 @@ const VSHADER_SOURCE =
     "   vec3 lightDirection = normalize(u_LightPosition);\n" + //мировые координаты
     "   float nDotL = max(dot(lightDirection, normal), 0.0);\n" + //мировые координаты
     ///////////////////////////////////////////////////////////////////////////////////////
-    // "   vec3 surfaceWorldPosition = vec3(u_MvpMatrix * vec4(u_LightDirectionFromEyes, 1.0));\n" + // система координат наблюдения
+    // "   vec3 surfacePositionWithLight = vec3(u_MvpMatrix * vec4(u_LightDirectionFromEyes, 1.0));\n" + // система координат наблюдения
     // "   vec3 eyeCoordinates = vec3(u_MvpMatrix * a_Position);\n" + // система координат наблюдения
-    // "   vec3 surfaceToLightDirection = normalize(surfaceWorldPosition - eyeCoordinates);\n" + // система координат наблюдения
+    // "   vec3 surfaceToLightDirection = normalize(surfacePositionWithLight - eyeCoordinates);\n" + // система координат наблюдения
     // "   float nDotL = max(dot(surfaceToLightDirection, normal), 0.0);\n" + // система координат наблюдения
     "   vec3 diffuse = u_LightColor * a_Color.rgb * nDotL;\n" +
     "   v_Color = vec4(diffuse, a_Color.a);\n" +
