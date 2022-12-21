@@ -7,17 +7,18 @@ const VSHADER_SOURCE =
     "attribute vec4 a_Normal;\n" +
     "uniform mat4 u_MvpMatrix;\n" +
     "uniform vec3 u_LightColor;\n" +
-    "uniform vec3 u_LightDirection;\n" + //мировые координаты
+    "uniform vec3 u_LightPosition;\n" + //мировые координаты
     "uniform vec3 u_LightDirectionFromEyes;\n" + // система координат наблюдения
     "varying vec4 v_Color;\n" +
     "void main() {\n" +
     "   gl_Position = u_MvpMatrix * a_Position ;\n" +
     "   vec3 normal = normalize(a_Normal.xyz);\n" +
-    "   vec3 lightDirection = normalize(u_LightDirection);\n" + //мировые координаты
+    "   vec3 lightDirection = normalize(u_LightPosition);\n" + //мировые координаты
     "   float nDotL = max(dot(lightDirection, normal), 0.0);\n" + //мировые координаты
-    // "   vec3 surfaceWorldPosition = vec3(gl_Position);\n" + // система координат наблюдения
-    // "   vec3 surfaceToLightDirection = surfaceWorldPosition - u_LightDirectionFromEyes;\n" + // система координат наблюдения
-    // "   surfaceToLightDirection = normalize(surfaceToLightDirection);\n" + // система координат наблюдения
+    ///////////////////////////////////////////////////////////////////////////////////////
+    // "   vec3 surfaceWorldPosition = vec3(u_MvpMatrix * vec4(u_LightDirectionFromEyes, 1.0));\n" + // система координат наблюдения
+    // "   vec3 eyeCoordinates = vec3(u_MvpMatrix * a_Position);\n" + // система координат наблюдения
+    // "   vec3 surfaceToLightDirection = normalize(surfaceWorldPosition - eyeCoordinates);\n" + // система координат наблюдения
     // "   float nDotL = max(dot(surfaceToLightDirection, normal), 0.0);\n" + // система координат наблюдения
     "   vec3 diffuse = u_LightColor * a_Color.rgb * nDotL;\n" +
     "   v_Color = vec4(diffuse, a_Color.a);\n" +
@@ -82,23 +83,23 @@ function main() {
     ); //light color
 
     // мировая система
-    const u_LightDirection = gl.getUniformLocation(
+    const u_LightPosition = gl.getUniformLocation(
         gl.program,
-        "u_LightDirection"
+        "u_LightPosition"
     );
-    gl.uniform3f(u_LightDirection, 0.0, 4.0, 5.0);
+    gl.uniform3f(u_LightPosition, 2.0, 4.0, 5.0);
 
-    // // система наблюдения
-    // const u_LightDirectionFromEyes = gl.getUniformLocation(
-    //     gl.program,
-    //     "u_LightDirectionFromEyes"
-    // );
-    // gl.uniform3f(u_LightDirectionFromEyes, 2.0, 0.0, 0.0);
+    // система наблюдения
+    const u_LightDirectionFromEyes = gl.getUniformLocation(
+        gl.program,
+        "u_LightDirectionFromEyes"
+    );
+    gl.uniform3f(u_LightDirectionFromEyes, -3.5, -2.5, -10.0);
 
     let mvpMatrix = mat4.create(),
         projMatrix = mat4.create(),
         viewMatrix = mat4.create();
-    mat4.lookAt(viewMatrix, [2.0, 4.0, 5.0], [0.0, 0.0, 0.0], [0, 1, 0]);
+    mat4.lookAt(viewMatrix, [3.0, 4.0, 5.0], [0.0, 0.0, 0.0], [0, 1, 0]);
     mat4.perspective(
         projMatrix,
         glMatrix.glMatrix.toRadian(30),
