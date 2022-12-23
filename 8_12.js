@@ -17,8 +17,6 @@ const VSHADER_SOURCE =
     "   v_Color = vec4(a_Color, 1.0);\n" +
     "}\n";
 
-//UMVMatrix = u_MvpMatrix
-
 const FSHADER_SOURCE =
     "precision highp float;\n" +
     "uniform vec3 u_ViewPosition;\n" +
@@ -27,7 +25,6 @@ const FSHADER_SOURCE =
     "uniform vec3 u_AmbientLight;\n" +
     "uniform vec3 u_FogColor;\n" +
     "const float density = 0.2;\n" + //density of fog
-    ///////////////////////////////////////////
     "varying vec3 v_surfaceWorldPosition;\n" +
     "varying vec3 v_Normal;\n" +
     "varying vec4 v_Color;\n" +
@@ -38,20 +35,16 @@ const FSHADER_SOURCE =
     "vec3 phongModel(const in vec3 vertexPosition, const in vec3 normal) {\n" +
     "	vec3 lightDirection = normalize(u_LightPosition - vertexPosition);\n" +
     "	vec3 viewDirection = normalize(u_ViewPosition - vertexPosition);\n" +
-    // "   vec3 lightAndViewDirection = normalize(lightDirection + viewDirection);\n" +
     "	vec3 reflectDirection = reflect(-lightDirection, normal);\n" +
     "	float nDotL = max(dot(lightDirection, normal), 0.0);\n" +
     "	float vDotR = max(dot(viewDirection, reflectDirection), 0.0);\n" +
-    "	vec3 diffuse = u_LightColor * v_Color.rgb * nDotL;\n" +
-    "	vec3 ambient = u_AmbientLight * v_Color.rgb;\n" +
-    "   vec3 specular = u_LightColor * v_Color.rgb * pow(vDotR, m);\n" +
+    "	vec3 diffuse = u_LightColor * v_Color.rgb * nDotL;\n" + //kd * u_LightColor * nDotL
+    "	vec3 ambient = u_AmbientLight * v_Color.rgb;\n" + //ka * u_AmbientLight
+    "   vec3 specular = u_LightColor * v_Color.rgb * pow(vDotR, m);\n" + //ks * u_LightColor * pow(vDotR, m)
     "   return diffuse + ambient + specular;\n" +
     "}\n" +
     "void main() {\n" +
     "   gl_FragColor = v_Color;\n" +
-    // "   gl_FragColor.rgb += phongModel(v_surfaceWorldPosition, v_Normal);\n" +
-    // "   gl_FragColor.rgb += phongModel(v_surfaceWorldPosition, -v_Normal);\n" +
-    /////////////////////////////////////////////////////////////////////////////
     "   vec3 frontColor = phongModel(v_surfaceWorldPosition, v_Normal);\n" +
     "   vec3 backColor = phongModel(v_surfaceWorldPosition, -v_Normal);\n" +
     "   vec3 surfaceColor;\n" +
@@ -153,7 +146,6 @@ function main() {
 
     mat4.perspective(projMatrx, glMatrix.glMatrix.toRadian(30), 1, 0.001, 1000);
     mat4.lookAt(viewMatrix, [5.0, 10.0, 12.5], [0.0, 0.0, 0.0], [0, 1, 0]);
-    // mat4.lookAt(viewMatrix, [25.0, 65.0, 35], [0.0, 2.0, 0.0], [0, 1, 0]);
     mat4.multiply(mvpMatrix, projMatrx, viewMatrix);
     mat4.multiply(mvpMatrix, mvpMatrix, modelMatrix);
     mat4.invert(normalMatrix, modelMatrix);

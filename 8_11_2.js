@@ -25,7 +25,6 @@ const FSHADER_SOURCE =
     "uniform vec3 u_AmbientLight;\n" +
     "uniform vec3 u_FogColor;\n" +
     "const float _rho = 0.05;\n" +
-    ///////////////////////////////////////////
     "varying vec3 v_surfaceWorldPosition;\n" +
     "varying vec3 v_Normal;\n" +
     "varying vec4 v_Color;\n" +
@@ -37,25 +36,20 @@ const FSHADER_SOURCE =
     "	vec3 surfaceToLightDirection = normalize(u_LightPosition - vertexPosition);\n" +
     "	vec3 surfaceToViewDirection = normalize(u_ViewPosition - vertexPosition);\n" +
     "   vec3 halfVector = normalize(surfaceToLightDirection + surfaceToViewDirection);\n" +
-    "	vec3 reflectDirection = reflect(-surfaceToLightDirection, normal);\n" +
-    "	float nDotL = max(dot(surfaceToLightDirection, normal), 0.0);\n" +
-    "	float vDotR = max(dot(surfaceToViewDirection, reflectDirection), 0.0);\n" +
+    // "	vec3 reflectDirection = reflect(-surfaceToLightDirection, normal);\n" +
+    // "	float nDotL = max(dot(surfaceToLightDirection, normal), 0.0);\n" +
+    // "	float vDotR = max(dot(surfaceToViewDirection, reflectDirection), 0.0);\n" +
     "	vec3 lightDirection = normalize(u_LightPosition - vertexPosition);\n" +
     "	vec3 viewDirection = normalize(u_ViewPosition - vertexPosition);\n" +
-    "   vec3 lightAndViewDirection = normalize(lightDirection + viewDirection);\n" +
     "	vec3 reflectDirection = reflect(-lightDirection, normal);\n" +
     "	float nDotL = max(dot(lightDirection, normal), 0.0);\n" +
     "	float vDotR = max(dot(viewDirection, reflectDirection), 0.0);\n" +
-    "	vec3 diffuse = kd * u_LightColor * v_Color.rgb * nDotL;\n" +
-    "	vec3 ambient = ka * u_AmbientLight * v_Color.rgb;\n" +
-    "   vec3 specular = ks * u_LightColor * v_Color.rgb * pow(vDotR, m);\n" +
+    "	vec3 diffuse = kd * u_LightColor * nDotL;\n" +
+    "	vec3 ambient = ka * u_AmbientLight;\n" +
+    "   vec3 specular = ks * u_LightColor * pow(vDotR, m);\n" +
     "   return diffuse + ambient + specular;\n" +
     "}\n" +
     "void main() {\n" +
-    // "   gl_FragColor = v_Color;\n" +viewDirection
-    // "   gl_FragColor.rgb += phongModel(v_surfaceWorldPosition, v_Normal);\n" +
-    // "   gl_FragColor.rgb += phongModel(v_surfaceWorldPosition, -v_Normal);\n" +
-    /////////////////////////////////////////////////////////////////////////////
     "   vec3 frontColor = phongModel(v_surfaceWorldPosition, v_Normal);\n" +
     "   vec3 backColor = phongModel(v_surfaceWorldPosition, -v_Normal);\n" +
     "   vec3 surfaceColor;\n" +

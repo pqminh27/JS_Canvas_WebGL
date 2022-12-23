@@ -4,39 +4,33 @@ const {mat2, mat3, mat4, vec2, vec3, vec4} = glMatrix;
 const VSHADER_SOURCE =
     "attribute vec4 a_Position;\n" +
     "attribute vec4 a_Color;\n" +
-    "attribute vec4 a_Normal;\n" +
+    "attribute vec3 a_Normal;\n" +
     "uniform mat4 u_MvpMatrix;\n" +
     "uniform mat4 u_ModelMatrix;\n" +
-    "uniform mat4 u_NormalMatrix;\n" +
+    "uniform mat3 u_NormalMatrix;\n" +
     "uniform vec3 u_LightColor;\n" +
     "uniform vec3 u_LightPosition;\n" +
     "uniform vec3 u_AmbientLight;\n" +
     "uniform vec3 u_viewWorldPosition;\n" +
-    "vec3 ka = vec3(0.2313, 0.2313, 0.2313);\n" + //Коэфф отражения фонового света
-    "vec3 kd = vec3(0.2775, 0.2775, 0.2775);\n" + //Коэфф отражения рассеянного света
-    "vec3 ks = vec3(0.7739, 0.7739, 0.7739);\n" + //Коэфф зеркального отражения
+    "vec3 ka = vec3(0.2313, 0.2313, 0.2313);\n" + //Коэффициент отражения фонового света
+    "vec3 kd = vec3(0.2775, 0.2775, 0.2775);\n" + //Коэффициент отражения рассеянного света
+    "vec3 ks = vec3(0.7739, 0.7739, 0.7739);\n" + //Коэффициент зеркального отражения
     "const float m = 90.0;\n" +
     "varying vec4 v_Color;\n" +
     "void main() {\n" +
     "   gl_Position = u_MvpMatrix * a_Position;\n" +
-    "   vec3 normal = normalize(vec3(u_NormalMatrix * a_Normal));\n" +
+    "   vec3 normal = normalize(u_NormalMatrix * a_Normal);\n" +
     "   vec4 vertexPosition = u_ModelMatrix * a_Position;\n" +
     "   vec3 v_surfaceToLight = u_LightPosition - vec3(vertexPosition);\n" +
     "   vec3 v_surfaceToView = u_viewWorldPosition - vec3(vertexPosition);\n" +
     "   vec3 surfaceToLightDirection = normalize(v_surfaceToLight);\n" +
     "   vec3 surfaceToViewDirection = normalize(v_surfaceToView);\n" +
-    "   vec3 lightAndViewDirection = normalize(surfaceToLightDirection + surfaceToViewDirection);\n" +
-    "   vec3 mirroredViewDirection = normalize(dot(normal + normal, surfaceToLightDirection) * normal - surfaceToLightDirection);\n" +
+    "   float mirroredViewDirection = dot(normal, surfaceToLightDirection);\n" +
     "   float lightDirectionDotNormal = max(dot(surfaceToLightDirection, normal), 0.0);\n" +
-    "   float viewDotMirroredDirection = max(dot(surfaceToViewDirection, mirroredViewDirection), 0.0);\n" +
-    "   vec3 ambient = ka * u_AmbientLight * a_Color.rgb;\n" +
-    "   vec3 diffuse = kd * u_LightColor * a_Color.rgb * lightDirectionDotNormal;\n" +
-    "   vec3 specular = ks * u_LightColor * pow(viewDotMirroredDirection, m);\n" +
+    "   vec3 ambient = ka * u_AmbientLight;\n" +
+    "   vec3 diffuse = kd * u_LightColor * lightDirectionDotNormal;\n" +
+    "   vec3 specular = ks * u_LightColor * pow(mirroredViewDirection, m);\n" +
     "   v_Color = vec4(diffuse + ambient + specular, a_Color.a);\n" +
-    // "   float specular = 0.0;\n" +
-    // "   if (light > 0.0) {\n" +
-    // "       specular = pow(max(dot(normal, lightAndViewDirection), 0.0), u_shininess);\n" +
-    // "   }\n" +
     "}\n";
 
 const FSHADER_SOURCE =
@@ -105,19 +99,19 @@ function main() {
         g_colors.white[1],
         g_colors.white[2]
     );
-    gl.uniform3f(u_LightPosition, 3.5, 4.0, 5.0);
-    gl.uniform3f(u_AmbientLight, 0.0, 0.0, 0.0);
+    gl.uniform3f(u_LightPosition, 2.5, 3.5, 4.0);
+    gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
 
     const viewWorldPositionLocation = gl.getUniformLocation(
         gl.program,
         "u_viewWorldPosition"
     );
-    const camera = [6.0, 6.0, 14.0];
+    const camera = [5.0, 5.0, 5.0];
     gl.uniform3fv(viewWorldPositionLocation, camera);
 
     const modelMatrix = mat4.create(),
-        mvpMatrix = mat4.create(),
-        normalMatrix = mat4.create();
+        mvpMatrix = mat4.create();
+    const normalMatrix = mat3.create();
     const projMatrx = mat4.create(),
         viewMatrix = mat4.create();
 
@@ -135,11 +129,10 @@ function main() {
 
     mat4.multiply(mvpMatrix, mvpMatrix, modelMatrix);
 
-    mat4.invert(normalMatrix, modelMatrix);
-    mat4.transpose(normalMatrix, normalMatrix);
+    mat3.normalFromMat4(normalMatrix, modelMatrix);
 
     gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix);
-    gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix);
+    gl.uniformMatrix3fv(u_NormalMatrix, false, normalMatrix);
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 

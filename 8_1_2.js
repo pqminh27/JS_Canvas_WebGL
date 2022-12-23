@@ -99,7 +99,7 @@ function main() {
     let mvpMatrix = mat4.create(),
         projMatrix = mat4.create(),
         viewMatrix = mat4.create();
-    mat4.lookAt(viewMatrix, [2.0, 3.0, 5.0], [0.0, 0.0, 0.0], [0, 1, 0]);
+    mat4.lookAt(viewMatrix, [3.0, 4.0, 5.0], [0.0, 0.0, 0.0], [0, 1, 0]);
     mat4.perspective(
         projMatrix,
         glMatrix.glMatrix.toRadian(30),

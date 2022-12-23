@@ -1,58 +1,5 @@
 "use strict";
 const {mat2, mat3, mat4, vec2, vec3, vec4} = glMatrix;
-// const VSHADER_SOURCE =
-//     "attribute vec3 a_Position;\n" +
-//     "attribute vec3 a_Normal;\n" +
-//     "attribute vec3 a_Color;\n" +
-//     "uniform mat4 uMVMatrix;\n" +
-//     "uniform mat4 uPMatrix;\n" +
-//     "uniform mat4 uNMatrix;\n" +
-//     "uniform vec3 uLightPosition;\n" +
-//     "uniform vec3 u_viewWorldPosition;\n" +
-//     "uniform vec3 uSpecularLightColor;\n" +
-//     "varying vec3 v_Normal;\n" +
-//     "varying vec3 v_surfaceToLight;\n" +
-//     "varying vec3 v_surfaceToView;\n" +
-//     "varying vec4 v_Color;\n" +
-//     "void main() {\n" +
-//     "   gl_Position = uPMatrix * vec4(a_Position, 1.0);\n" +
-//     "   v_Normal = mat3(uNMatrix) * a_Normal;\n" +
-//     "   vec3 surfaceWorldPosition = (uMVMatrix * vec4(a_Position, 1.0)).xyz;\n" +
-//     "   v_surfaceToLight = uLightPosition - surfaceWorldPosition;\n" +
-//     "   v_surfaceToView = u_viewWorldPosition - surfaceWorldPosition;\n" +
-//     "   v_Color = vec4(a_Color, 1.0);\n" +
-//     "}\n";
-
-// const FSHADER_SOURCE =
-//     "precision mediump float;\n" +
-//     "uniform vec3 u_AmbientLight;\n" +
-//     "uniform vec3 u_LightColor;\n" +
-//     "varying vec3 v_Normal;\n" +
-//     "varying vec3 v_surfaceToLight;\n" +
-//     "varying vec3 v_surfaceToView;\n" +
-//     "varying vec4 v_Color;\n" +
-//     "const float m = 90.0;\n" +
-//     "void main() {\n" +
-//     "   vec3 normal = normalize(v_Normal);\n" +
-//     "   vec3 lightDirection = normalize(v_surfaceToLight);\n" +
-//     "   vec3 viewDirection = normalize(v_surfaceToView);\n" +
-//     "   vec3 reflectDirection = reflect(-lightDirection, normal);\n" + //Using reflect
-//     // "   vec3 halfVector = normalize(lightDirection + viewDirection);\n" +
-//     "   float nDotL = max(dot(normal, lightDirection), 0.0);\n" +
-//     "	float vDotR = max(dot(v_surfaceToView, reflectDirection), 0.0);\n" +
-//     "   vec3 ambient = u_AmbientLight * v_Color.rgb;\n" +
-//     "   vec3 diffuse = u_LightColor * v_Color.rgb * nDotL;\n" +
-//     "   vec3 specular = u_LightColor * v_Color.rgb * pow(vDotR, m);\n" +
-//     // "   if (light > 0.0) {\n" +
-//     // "       specular = pow(dot(normal, halfVector), m);\n" +
-//     // "   }\n" +
-//     // "   gl_FragColor = v_Color;\n" +
-//     // "   gl_FragColor.rgb *= nDotL;\n" +
-//     // "   gl_FragColor.rgb += ambient;\n" +
-//     // "   gl_FragColor.rgb += specular;\n" +
-//     // "   gl_FragColor.rgb += diffuse;\n" +
-//     "   gl_FragColor = vec4(diffuse + ambient + specular, v_Color.a);\n" +
-//     "}\n";
 
 const VSHADER_SOURCE =
     "attribute vec3 a_Position;\n" +
@@ -80,6 +27,9 @@ const FSHADER_SOURCE =
     "varying vec3 v_Normal;\n" +
     "varying vec4 v_Color;\n" +
     "varying vec3 v_surfaceWorldPosition;\n" +
+    "vec3 ka = vec3(0.2313, 0.2313, 0.2313);\n" + //Коэффициент отражения фонового света
+    "vec3 kd = vec3(0.2775, 0.2775, 0.2775);\n" + //Коэффициент отражения рассеянного света
+    "vec3 ks = vec3(0.7739, 0.7739, 0.7739);\n" + //Коэффициент зеркального отражения
     "const float m = 90.0;\n" +
     "void main() {\n" +
     "   vec3 lightDirection = normalize(u_LightPosition - v_surfaceWorldPosition);\n" +
@@ -87,19 +37,9 @@ const FSHADER_SOURCE =
     "	vec3 reflectDirection = reflect(-lightDirection, v_Normal);\n" +
     "   float nDotL = max(dot(lightDirection, v_Normal), 0.0);\n" +
     "	float vDotR = max(dot(viewDirection, reflectDirection), 0.0);\n" +
-    "   vec3 diffuse = u_LightColor * v_Color.rgb * nDotL;\n" +
-    "   vec3 ambient = u_AmbientLight * v_Color.rgb;\n" +
-    // "   float specular = 0.0;\n" +
-    // "   if (nDotL > 0.0) {\n" +
-    // "       specular = pow(dot(v_Normal, halfVector), m);\n" +
-    // "   }\n" +
-    // "   gl_FragColor = v_Color;\n" +
-    // "   gl_FragColor.rgb *= nDotL;\n" +
-    // "   gl_FragColor.rgb += diffuse + ambient + specular;\n" +
-    ///////////////////////////////////////////////////////////////
-    // "   gl_FragColor = vec4(diffuse + ambient, v_Color.a);\n" +
-    /////////////////////////////////////////////////////////////////
-    "   vec3 specular = u_LightColor * v_Color.rgb * pow(vDotR, m);\n" +
+    "   vec3 diffuse = kd * u_LightColor  * nDotL;\n" +
+    "   vec3 ambient = ka * u_AmbientLight;\n" +
+    "   vec3 specular = ks * u_LightColor * pow(vDotR, m);\n" +
     "   gl_FragColor = vec4(diffuse + ambient + specular, v_Color.a);\n" +
     "}\n";
 

@@ -32,22 +32,12 @@ const FSHADER_SOURCE =
     "   vec3 viewDirection = normalize(u_ViewPosition - v_surfaceWorldPosition);\n" +
     // "   vec3 lightAndViewDirection = normalize(lightDirection + viewDirection);\n" +
     // "	vec3 reflectDirection = reflect(-lightDirection, v_Normal);\n" +
-    "   vec3 mirrorViewDirection = normalize(dot(v_Normal + v_Normal, lightDirection) * v_Normal - lightDirection);\n" +
+    "   vec3 mirrorViewDirection = normalize(dot(v_Normal, lightDirection) * v_Normal - lightDirection);\n" +
     "   float nDotL = max(dot(lightDirection, v_Normal), 0.0);\n" +
     // "	float vDotR = max(dot(viewDirection, reflectDirection), 0.0);\n" +
     "	float vDotR = max(dot(viewDirection, mirrorViewDirection), 0.0);\n" +
     "   vec3 diffuse = u_LightColor * v_Color.rgb * nDotL;\n" +
     "   vec3 ambient = u_AmbientLight * v_Color.rgb;\n" +
-    // "   float specular = 0.0;\n" +
-    // "   if (nDotL > 0.0) {\n" +
-    // "       specular = pow(dot(v_Normal, lightAndViewDirection), m);\n" +
-    // "   }\n" +
-    // "   gl_FragColor = v_Color;\n" +
-    // "   gl_FragColor.rgb *= nDotL;\n" +
-    // "   gl_FragColor.rgb += diffuse + ambient + specular;\n" +
-    ///////////////////////////////////////////////////////////////
-    // "   gl_FragColor = vec4(diffuse + ambient, v_Color.a);\n" +
-    /////////////////////////////////////////////////////////////////
     "   vec3 specular = u_LightColor * v_Color.rgb * pow(vDotR, m);\n" +
     "   gl_FragColor = vec4(diffuse + ambient + specular, v_Color.a);\n" +
     "}\n";
